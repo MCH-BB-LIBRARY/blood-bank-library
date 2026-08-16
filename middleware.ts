@@ -10,12 +10,14 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname.startsWith("/api/documents") && req.method !== "GET";
   const protectedUpload = req.nextUrl.pathname.startsWith("/api/upload");
 
-  if ((protectedAdminPage || protectedApi || protectedUpload) && !isValid) {
-    if (protectedAdminPage) {
-      return NextResponse.redirect(new URL("/admin/login", req.url));
-    }
+ if (protectedAdminPage && !isValid) {
+    return NextResponse.redirect(new URL("/admin/login", req.url));
+  }
+
+  if ((protectedApi || protectedUpload) && !isValid) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }
+
   return NextResponse.next();
 }
 
